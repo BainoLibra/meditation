@@ -1,41 +1,46 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-import { Ionicons } from '@expo/vector-icons';
-
 export default function TabLayout() {
-  
   return (
     <Tabs
       screenOptions={{
-        headerShown: false
-      }}>
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          href: null,
+        }}
+      />
       <Tabs.Screen
         name="Meditations"
         options={{
           title: 'Meditations',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="home" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="home-outline" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="Breathing"
         options={{
           title: 'Breathing',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="paper-plane" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="paper-plane-outline" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="Journal"
         options={{
           title: 'Journal',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="book" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="book-outline" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="Profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="person" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={28} color={color} />,
         }}
       />
     </Tabs>
