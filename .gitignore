@@ -41,3 +41,7 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Explicitly don't ignore these files
+!app/(tabs)/Breathing.tsx
+!meditation/**/App.tsx
