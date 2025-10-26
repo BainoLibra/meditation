@@ -36,7 +36,7 @@ export const MEDITATIONS: MeditationTrack[] = [
     description: 'A gentle introduction to mindful breathing. Perfect for beginners learning to connect with their breath.',
     duration: 300,
     image: 'https://images.pexels.com/photos/3560044/pexels-photo-3560044.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    audio: 'https://raw.githubusercontent.com/BainOLibra/meditation-app-resources/main/sounds/rain.mp3',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
     category: 'mindfulness',
     level: 'beginner'
   },

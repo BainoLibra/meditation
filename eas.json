@@ -9,7 +9,11 @@
       "distribution": "internal",
       "android": {
         "gradleCommand": ":app:assembleDebug",
-        "buildType": "apk"
+        "buildType": "apk",
+        "withoutCredentials": true,
+        "env": {
+          "EXPO_NO_ICON_VALIDATION": "1"
+        }
       },
       "ios": {
         "buildConfiguration": "Debug",

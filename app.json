@@ -4,7 +4,7 @@
     "slug": "meditation",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon/app-icon.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "meditation",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -18,9 +18,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#4A90E2",
-        "foregroundImage": "./assets/images/icon/android-adaptive-foreground.png",
-        "backgroundImage": "./assets/images/icon/android-adaptive-background.png",
-        "monochromeImage": "./assets/images/icon/android-adaptive-monochrome.png"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundImage": "./assets/images/adaptive-background.png",
+        "monochromeImage": "./assets/images/adaptive-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,

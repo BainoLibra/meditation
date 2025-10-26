@@ -77,7 +77,7 @@ export default function MeditationScreen() {
           { uri: meditation.audio },
           { 
             shouldPlay: true,
-            isLooping: true,
+            isLooping: true, // Keep audio looping
             volume: 1.0,
             progressUpdateIntervalMillis: 1000,
           },
@@ -120,7 +120,11 @@ export default function MeditationScreen() {
               clearInterval(timerRef.current);
             }
             setIsPlaying(false);
-            sound?.stopAsync();
+            if (sound) {
+              sound.stopAsync().then(() => {
+                sound.unloadAsync();
+              });
+            }
             return 0;
           }
           return time - 1;
