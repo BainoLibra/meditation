@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Dimensions, FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import { Dimensions, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { CATEGORIES, MEDITATIONS, MeditationCategory, MeditationTrack } from '../../../data/meditations';
 import { useThemeColor } from '../../../hooks/use-theme-color';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
 const CARD_MARGIN = 10;
@@ -36,7 +37,10 @@ export default function MeditationsScreen() {
         entering={FadeIn.duration(400)}
         exiting={FadeOut.duration(300)}
       >
-        <Link href={`./${item.id}`} asChild>
+        <Link href={{
+          pathname: "/(tabs)/Meditations/[id]",
+          params: { id: item.id }
+        }} asChild>
           <Pressable 
             style={({ pressed }) => [
               styles.card, 
@@ -44,7 +48,15 @@ export default function MeditationsScreen() {
               pressed && styles.cardPressed
             ]}
           >
-            <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.image}
+                  contentFit="cover"
+                  transition={300}
+                  placeholder={item.image}
+                />
+              </View>
             <View style={styles.meta}>
               <View style={styles.categoryRow}>
                 <Text style={styles.categoryEmoji}>{category.icon}</Text>
@@ -64,7 +76,10 @@ export default function MeditationsScreen() {
                 {item.subtitle}
               </Text>
               <View style={styles.playRow}>
-                <Link href={`./${item.id}`} asChild>
+                <Link href={{
+                  pathname: "/(tabs)/Meditations/[id]",
+                  params: { id: item.id }
+                }} asChild>
                   <Pressable style={[styles.playButton, { backgroundColor: tintColor }]}>
                     <Text style={styles.playText}>Play</Text>
                   </Pressable>
@@ -187,10 +202,16 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.98 }],
     opacity: 0.95,
   },
-  image: {
+  imageContainer: {
     width: '100%',
     height: CARD_WIDTH,
     borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(0,0,0,0.1)',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
   meta: {
     padding: 12,
