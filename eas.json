@@ -1,29 +1,23 @@
 {
   "cli": {
-    "version": ">= 16.24.1",
-    "appVersionSource": "remote"
+    "version": ">= 16.24.1"
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "gradleCommand": ":app:assembleDebug",
-        "buildType": "apk",
-        "withoutCredentials": true,
-        "env": {
-          "EXPO_NO_ICON_VALIDATION": "1"
-        }
-      },
-      "ios": {
-        "buildConfiguration": "Debug",
-        "resourceClass": "m1-medium"
-      }
-    },
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease",
+        "env": {
+          "EXPO_NO_ICON_VALIDATION": "1"
+        }
+      }
+    },
+    "development": {
+      "developmentClient": true,
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
       }
     },
     "production": {
