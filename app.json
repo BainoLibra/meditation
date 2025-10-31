@@ -13,7 +13,8 @@
       "package": "com.bainomeditation"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-audio"
     ],
     "extra": {
       "eas": {
