@@ -1,6 +1,7 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { useTheme } from '../../hooks/theme-provider';
 import { useColorScheme } from '../../hooks/use-color-scheme';
 import { useThemeColor } from '../../hooks/use-theme-color';
 
@@ -31,6 +32,7 @@ export default function Profile() {
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
+  const { theme, toggleDark, setTheme } = useTheme();
 
   const statistics: StatisticProps[] = [
     { label: 'Minutes Meditated', value: '320', icon: 'clock-o' },
@@ -49,6 +51,18 @@ export default function Profile() {
       <Switch
         value={value}
         onValueChange={onToggle}
+        trackColor={{ false: '#767577', true: tintColor }}
+        thumbColor="#f4f3f4"
+      />
+    </View>
+  );
+
+  const renderThemeToggle = () => (
+    <View style={styles.settingItem}>
+      <Text style={[styles.settingLabel, { color: textColor }]}>Dark Mode</Text>
+      <Switch
+        value={theme === 'dark'}
+        onValueChange={() => toggleDark()}
         trackColor={{ false: '#767577', true: tintColor }}
         thumbColor="#f4f3f4"
       />
@@ -76,6 +90,7 @@ export default function Profile() {
         
         {renderSettingItem('Notifications', notifications, setNotifications)}
         {renderSettingItem('Haptic Feedback', hapticFeedback, setHapticFeedback)}
+        {renderThemeToggle()}
         
         <Pressable style={styles.button}>
           <Text style={[styles.buttonText, { color: tintColor }]}>Export Data</Text>

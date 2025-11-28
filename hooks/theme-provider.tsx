@@ -2,13 +2,12 @@ import React, { createContext, useContext, useState, type ReactNode } from 'reac
 
 export type ThemeChoice = 'light' | 'dark' | 'system';
 
-type ThemeContextType = {
+export type ThemeContextType = {
   theme: ThemeChoice;
   setTheme: (t: ThemeChoice) => void;
   toggleDark: () => void;
 };
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeChoice>('system');
