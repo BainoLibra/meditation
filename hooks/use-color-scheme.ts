@@ -8,10 +8,13 @@ import { ThemeContext } from './theme-provider';
  * we return that; otherwise we fall back to the system color scheme.
  */
 export function useColorScheme(): 'light' | 'dark' {
-	const themeCtx = useContext(ThemeContext);
-
-	if (themeCtx && themeCtx.theme && themeCtx.theme !== 'system') {
-		return themeCtx.theme === 'dark' ? 'dark' : 'light';
+	try {
+		const themeCtx = useContext(ThemeContext);
+		if (themeCtx?.theme && themeCtx.theme !== 'system') {
+			return themeCtx.theme === 'dark' ? 'dark' : 'light';
+		}
+	} catch (e) {
+		// Context not available, fall back to system
 	}
 
 	const sys = rnUseColorScheme();
