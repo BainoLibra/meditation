@@ -1,5 +1,4 @@
-import { Stack } from "expo-router";
+// This file is kept for git compatibility but is not used
+// The actual layout is defined in _layout.tsx
+export { default } from './_layout';
 
-export default function Layout() {
-  return <Stack />;
-}

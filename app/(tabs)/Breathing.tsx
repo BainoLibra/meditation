@@ -1,20 +1,32 @@
+import { Audio } from 'expo-av';
 import * as Haptics from 'expo-haptics';
-import { useEffect, useState } from 'react';
+import { Image } from 'expo-image';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming
+    Easing,
+    useAnimatedStyle,
+    useSharedValue,
+    withRepeat,
+    withTiming
 } from 'react-native-reanimated';
 import { useThemeColor } from '../../hooks/use-theme-color';
+
+const BREATHING_SOUNDS = [
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+];
 
 export default function Breathing() {
   const [isBreathing, setIsBreathing] = useState(false);
   const [currentPhase, setCurrentPhase] = useState('ready');
+  const [duration, setDuration] = useState(600); // 10 minutes default
+  const [timeRemaining, setTimeRemaining] = useState(duration);
+  const [sound, setSound] = useState<Audio.Sound>();
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
+  const timerRef = useRef<ReturnType<typeof setInterval>>(null);
+  const breathCycleRef = useRef<ReturnType<typeof setInterval>>(null);
   
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
@@ -25,8 +37,35 @@ export default function Breathing() {
     opacity: opacity.value,
   }));
 
-  const startBreathing = () => {
+  // Load and play breathing background sound
+  async function loadAndPlaySound() {
+    try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        staysActiveInBackground: true,
+        playsInSilentModeIOS: true,
+        shouldDuckAndroid: true,
+      });
+
+      const soundUrl = BREATHING_SOUNDS[Math.floor(Math.random() * BREATHING_SOUNDS.length)];
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        { uri: soundUrl },
+        {
+          shouldPlay: true,
+          isLooping: true,
+          volume: 0.5,
+        }
+      );
+      setSound(newSound);
+    } catch (error) {
+      console.error('Error loading sound:', error);
+    }
+  }
+
+  const startBreathing = async () => {
     setIsBreathing(true);
+    setTimeRemaining(duration);
+    await loadAndPlaySound();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
     // Breathing animation cycle
@@ -38,33 +77,73 @@ export default function Breathing() {
       -1,
       true
     );
+
+    // Start phase cycle
+    breathCycleRef.current = setInterval(() => {
+      setCurrentPhase((prev) => {
+        const phases = ['inhale', 'hold', 'exhale', 'rest'];
+        const currentIndex = phases.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % phases.length;
+        return phases[nextIndex];
+      });
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }, 4000);
+
+    // Start timer
+    timerRef.current = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          stopBreathing();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    setCurrentPhase('inhale');
   };
 
   const stopBreathing = () => {
     setIsBreathing(false);
     scale.value = withTiming(1);
     setCurrentPhase('ready');
+    
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (breathCycleRef.current) clearInterval(breathCycleRef.current);
+    
+    if (sound) {
+      sound.stopAsync().then(() => {
+        sound.unloadAsync();
+      }).catch(err => console.error('Error stopping sound:', err));
+    }
   };
 
   useEffect(() => {
-    if (isBreathing) {
-      const interval = setInterval(() => {
-        setCurrentPhase((prev) => {
-          const phases = ['inhale', 'hold', 'exhale', 'rest'];
-          const currentIndex = phases.indexOf(prev);
-          const nextIndex = (currentIndex + 1) % phases.length;
-          return phases[nextIndex];
-        });
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }, 4000);
-      
-      setCurrentPhase('inhale');
-      return () => clearInterval(interval);
-    }
-  }, [isBreathing]);
+    return () => {
+      stopBreathing();
+      if (sound) {
+        sound.unloadAsync().catch(err => console.error('Cleanup error:', err));
+      }
+    };
+  }, [sound]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
+      <Image
+        source={{
+          uri: 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+        }}
+        style={styles.backgroundImage}
+        contentFit="cover"
+      />
+      <View style={[styles.overlay, { backgroundColor: `${backgroundColor}80` }]} />
+
       <Pressable
         onPress={isBreathing ? stopBreathing : startBreathing}
         style={styles.breathingArea}
@@ -83,6 +162,11 @@ export default function Breathing() {
             ? getInstructions(currentPhase)
             : 'Take a moment to breathe'}
         </Text>
+        {isBreathing && (
+          <Text style={[styles.timerText, { color: tintColor }]}>
+            {formatTime(timeRemaining)}
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -109,11 +193,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
   breathingArea: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    zIndex: 1,
   },
   circle: {
     width: 200,
@@ -130,10 +225,17 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     alignItems: 'center',
+    zIndex: 1,
   },
   instructionText: {
     fontSize: 18,
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
+    fontWeight: '600',
+  },
+  timerText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 20,
   },
 });
