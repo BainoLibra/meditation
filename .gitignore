@@ -45,3 +45,7 @@ app-example
 # Explicitly don't ignore these files
 !app/(tabs)/Breathing.tsx
 !meditation/**/App.tsx
+
+# Ignore built APKs and local dev artifact
+*.apk
+dev.apk
