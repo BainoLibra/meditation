@@ -103,29 +103,50 @@ export default function Breathing() {
     setCurrentPhase('inhale');
   };
 
-  const stopBreathing = () => {
+  const stopBreathing = async () => {
     setIsBreathing(false);
     scale.value = withTiming(1);
     setCurrentPhase('ready');
-    
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (breathCycleRef.current) clearInterval(breathCycleRef.current);
-    
+
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (breathCycleRef.current) {
+      clearInterval(breathCycleRef.current);
+      breathCycleRef.current = null;
+    }
+
     if (sound) {
-      sound.stopAsync().then(() => {
-        sound.unloadAsync();
-      }).catch(err => console.error('Error stopping sound:', err));
+      try {
+        const status = await sound.getStatusAsync();
+        if (status?.isLoaded) {
+          // stop only if currently playing
+          if (status.isPlaying) {
+            await sound.stopAsync();
+          }
+        }
+        await sound.unloadAsync();
+      } catch (err) {
+        console.warn('Error stopping sound:', err);
+      } finally {
+        setSound(undefined);
+      }
     }
   };
 
   useEffect(() => {
     return () => {
-      stopBreathing();
-      if (sound) {
-        sound.unloadAsync().catch(err => console.error('Cleanup error:', err));
-      }
+      // call async cleanup without making the effect async
+      (async () => {
+        try {
+          await stopBreathing();
+        } catch (err) {
+          console.warn('Error during breathing cleanup:', err);
+        }
+      })();
     };
-  }, [sound]);
+  }, [/* run only on unmount */]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
