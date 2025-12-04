@@ -1,14 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+import { useTheme } from '../../hooks/theme-provider';
 
 export default function TabLayout() {
+  const { toggleDark, theme } = useTheme();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
       }}
     >
+      <Pressable
+        onPress={() => toggleDark()}
+        style={({ pressed }) => [styles.toggle, pressed && { opacity: 0.7 }]}
+        accessibilityLabel="Toggle theme"
+      >
+        <Ionicons name={theme === 'dark' ? 'sunny' : 'moon'} size={20} color="#fff" />
+      </Pressable>
+      
       <Tabs.Screen
         name="index"
         options={{
@@ -46,3 +57,15 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  toggle: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 50,
+    backgroundColor: '#00000066',
+    padding: 8,
+    borderRadius: 20,
+  },
+});
