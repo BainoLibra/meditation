@@ -3,14 +3,13 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
-  Easing,
-  FadeIn,
-  FadeOut,
-  ZoomIn,
-  ZoomOut,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
+    Easing,
+    FadeIn,
+    FadeOut,
+    useAnimatedStyle,
+    useSharedValue,
+    withRepeat,
+    withTiming,
 } from "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -21,6 +20,7 @@ interface SplashScreenProps {
 
 export default function AppSplashScreen({ onComplete }: SplashScreenProps) {
   const opacity = useSharedValue(1);
+  const scale = useSharedValue(0.9);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -28,6 +28,8 @@ export default function AppSplashScreen({ onComplete }: SplashScreenProps) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      // play a short pulse then fade out
+      scale.value = withRepeat(withTiming(1, { duration: 700, easing: Easing.out(Easing.ease) }), 1, false);
       opacity.value = withTiming(
         0,
         { duration: 600, easing: Easing.inOut(Easing.ease) },
@@ -61,29 +63,33 @@ export default function AppSplashScreen({ onComplete }: SplashScreenProps) {
 
       {/* Center content */}
       <View style={styles.centerContent}>
-        {/* Animated Logo */}
-        <Animated.Text
-          entering={ZoomIn.duration(800)}
-          exiting={ZoomOut.duration(600)}
-          style={styles.logo}
-        >
-          🧘‍♂️
-        </Animated.Text>
+        {/* Animated Logo Container using bundled app icon */}
+        <AnimatedLogo scale={scale} />
 
-        <Animated.Text
-          entering={FadeIn.delay(300).duration(800)}
-          style={styles.appName}
-        >
+        <Animated.Text entering={FadeIn.delay(300).duration(700)} style={styles.appName}>
           Meditation
         </Animated.Text>
 
-        <Animated.Text
-          entering={FadeIn.delay(500).duration(800)}
-          style={styles.tagline}
-        >
-          Breathe. Relax. Transform.
+        <Animated.Text entering={FadeIn.delay(500).duration(700)} style={styles.tagline}>
+          Breathe • Relax • Transform
         </Animated.Text>
       </View>
+    </Animated.View>
+  );
+}
+
+function AnimatedLogo({ scale }: { scale: Animated.SharedValue<number> }) {
+  const animated = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Animated.View style={[styles.logoContainer, animated]}>
+      <Image
+        source={require('../assets/images/icon/app-icon.png')}
+        style={styles.logoImage}
+        contentFit="contain"
+      />
     </Animated.View>
   );
 }
@@ -129,5 +135,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#e0e0e0",
     fontStyle: "italic",
+  },
+  logoContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  logoImage: {
+    width: 88,
+    height: 88,
+    borderRadius: 18,
   },
 });
