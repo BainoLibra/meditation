@@ -7,16 +7,17 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon/app-icon.png",
     "splash": {
-    "image": "./assets/images/splash/splash.png",
-    "resizeMode": "contain",
-    "backgroundColor": "#ffffff"
+      "image": "./assets/images/splash/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.bainomeditation"
     },
     "android": {
-      "package": "com.bainomeditation"
+      "package": "com.bainomeditation",
+      "versionCode": 2
     },
     "plugins": [
       "expo-router",
