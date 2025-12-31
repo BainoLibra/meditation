@@ -9,15 +9,23 @@
     "splash": {
       "image": "./assets/images/splash/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#5B4E9F"
     },
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.bainomeditation"
+      "bundleIdentifier": "com.bainomeditation",
+      "supportsTablet": true,
+      "icon": "./assets/images/icon/app-icon.png"
     },
     "android": {
       "package": "com.bainomeditation",
-      "versionCode": 2
+      "versionCode": 2,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon/android-adaptive-foreground.png",
+        "backgroundColor": "#5B4E9F",
+        "backgroundImage": "./assets/images/icon/android-adaptive-background.png",
+        "monochromeImage": "./assets/images/icon/android-adaptive-monochrome.png"
+      }
     },
     "plugins": [
       "expo-router",
