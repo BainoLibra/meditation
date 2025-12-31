@@ -3,16 +3,16 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
-    Easing,
-    FadeIn,
-    FadeOut,
-    useAnimatedStyle,
-    useSharedValue,
-    withRepeat,
-    withTiming,
+  Easing,
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming
 } from "react-native-reanimated";
 
-SplashScreen.preventAutoHideAsync().catch(() => {});
+SplashScreen.preventAutoHideAsync().catch(() => { });
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -27,20 +27,56 @@ export default function AppSplashScreen({ onComplete }: SplashScreenProps) {
   }));
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      // play a short pulse then fade out
-      scale.value = withRepeat(withTiming(1, { duration: 700, easing: Easing.out(Easing.ease) }), 1, false);
-      opacity.value = withTiming(
-        0,
-        { duration: 600, easing: Easing.inOut(Easing.ease) },
-        async () => {
-          await SplashScreen.hideAsync();
-          onComplete();
-        }
-      );
-    }, 1800);
+    let mounted = true;
 
-    return () => clearTimeout(timer);
+    const runAnimation = async () => {
+      try {
+        // play a short pulse then fade out
+        scale.value = withRepeat(withTiming(1, { duration: 700, easing: Easing.out(Easing.ease) }), 1, false);
+
+        await new Promise(resolve => setTimeout(resolve, 1800));
+
+        if (!mounted) return;
+
+        opacity.value = withTiming(
+          0,
+          { duration: 600, easing: Easing.inOut(Easing.ease) },
+          async () => {
+            try {
+              await SplashScreen.hideAsync();
+            } catch (e) {
+              console.warn("Failed to hide splash screen:", e);
+            }
+            if (mounted) onComplete();
+          }
+        );
+      } catch (e) {
+        console.error("Splash animation error:", e);
+        // Fallback safety
+        try {
+          await SplashScreen.hideAsync();
+        } catch { }
+        if (mounted) onComplete();
+      }
+    };
+
+    runAnimation();
+
+    // Safety timeout in case something hangs
+    const safetyTimer = setTimeout(async () => {
+      if (mounted) {
+        console.warn("Splash screen safety timeout triggered");
+        try {
+          await SplashScreen.hideAsync();
+        } catch { }
+        onComplete();
+      }
+    }, 5000);
+
+    return () => {
+      mounted = false;
+      clearTimeout(safetyTimer);
+    };
   }, []);
 
   return (
@@ -50,13 +86,16 @@ export default function AppSplashScreen({ onComplete }: SplashScreenProps) {
       exiting={FadeOut.duration(600)}
     >
       {/* Background image */}
+      {/* Background - using solid color instead of network image for reliability */}
+      <View style={[StyleSheet.absoluteFillObject, { backgroundColor: '#000' }]} />
+
+      {/* Optional: Local image if available, otherwise just use the gradient and color
       <Image
-        source={{
-          uri: "https://images.unsplash.com/photo-1528353518104-71c0b0a28ee3?auto=format&fit=crop&w=1950&q=80",
-        }}
+        source={require('../assets/images/splash/splash.png')}
         style={styles.backgroundImage}
         contentFit="cover"
-      />
+      /> 
+      */}
 
       {/* Soft gradient overlay */}
       <View style={styles.gradientOverlay} />
@@ -78,7 +117,7 @@ export default function AppSplashScreen({ onComplete }: SplashScreenProps) {
   );
 }
 
-function AnimatedLogo({ scale }: { scale: Animated.SharedValue<number> }) {
+function AnimatedLogo({ scale }: { scale: SharedValue<number> }) {
   const animated = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
