@@ -1,50 +1,92 @@
-# Welcome to your Expo app 👋
+# Meditation App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A cross-platform meditation and mindfulness application built with **React Native**, **Expo**, and **TypeScript**.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Guided Meditations**: Browse and play meditation sessions for stress relief, sleep, focus, and more.
+- **Breathing Exercises**: Interactive breathing tools to help you relax.
+- **Journaling**: Track your thoughts and progress.
+- **Profile**: Manage your streak and preferences.
+- **Offline Support**: Core features work without an internet connection.
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- **Framework**: [Expo](https://expo.dev) (SDK 50+) & React Native
+- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction) (File-based routing)
+- **Styling**: Native StyleSheet & Themed Components
+- **Animations**: React Native Reanimated
+- **Audio**: Expo Audio / AV
 
-   ```bash
-   npx expo start
-   ```
+## Getting Started
 
-In the output, you'll find options to open the app in a
+### Prerequisites
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Node.js** (LTS recommended)
+- **Git**
+- **Android Studio** (for Android emulator/development)
+- **Xcode** (for iOS simulator/development - Mac only)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Installation
 
-## Get a fresh project
+1.  Clone the repository:
+    ```bash
+    git clone <repository-url>
+    cd meditation
+    ```
 
-When you're ready, run:
+2.  Install dependencies:
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
 
-```bash
-npm run reset-project
+### Running the App
+
+This project uses native modules (Reanimated, Expo Audio), so it requires a **Development Build** rather than the standard Expo Go client.
+
+#### Android
+
+1.  Start the development server and build the Android app:
+    ```bash
+    npx expo run:android
+    ```
+    *Note: This will compile the native code and install the app on your connected device or emulator. It may take a few minutes the first time.*
+
+#### iOS
+
+1.  Start the development server and build the iOS app (Mac only):
+    ```bash
+    npx expo run:ios
+    ```
+
+### Troubleshooting
+
+- **App stuck on splash screen?**
+  Try restarting the development server with the clear flag:
+  ```bash
+  npx expo start --clear
+  ```
+
+- **"No development build installed" error?**
+  Make sure you run `npx expo run:android` or `npx expo run:ios` at least once to install the custom native runtime on your device.
+
+## Project Structure
+
+```
+meditation/
+├── app/                 # Expo Router file-based navigation (pages)
+│   ├── (tabs)/          # Main tab navigation
+│   ├── _layout.tsx      # Root layout and providers
+│   └── index.tsx        # Redirect logic
+├── components/          # Reusable UI components
+├── assets/              # Images and icons
+├── hooks/               # Custom React hooks
+├── data/                # Static data (meditations, categories)
+└── constants/           # App constants (colors, layout)
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## License
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+MIT
